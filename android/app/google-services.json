@@ -1,0 +1,130 @@
+{
+  "project_info": {
+    "project_number": "807290261623",
+    "project_id": "ride-ufsc",
+    "storage_bucket": "ride-ufsc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807290261623:android:4cdd8a6145cc96701ff672",
+        "android_client_info": {
+          "package_name": "com.rideufsc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807290261623-4ppruen0qsggvn3dn3llr8kejm9vf06n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc",
+            "certificate_hash": "91088b0e704366f08794d013854f43731d77ecdf"
+          }
+        },
+        {
+          "client_id": "807290261623-fhj41qkegnunfla2vacnllqt8buune3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc",
+            "certificate_hash": "5a66379d3c1d163f134b325a50e0c1ac0db4b4d6"
+          }
+        },
+        {
+          "client_id": "807290261623-j99l49bmhfnighbuaeb0bs31ur7iprkq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc",
+            "certificate_hash": "44b5ecf075cbc1a8316f7fc3def5eefb76b85872"
+          }
+        },
+        {
+          "client_id": "807290261623-5ksh5migs1oghq2dv2d4km23nppn2e9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZq7yrx2pyPAZc389T9EatJq86PLv2gQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807290261623-5ksh5migs1oghq2dv2d4km23nppn2e9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "807290261623-b7adl8lge8gn1v3211n4hq4q1pb5g5cr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rideufsc"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807290261623:android:3fee8fd672d436ed1ff672",
+        "android_client_info": {
+          "package_name": "com.rideufsc.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807290261623-eanfjnh6rg3nduu72l6oh8drgfc0nkj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc.staging",
+            "certificate_hash": "5a66379d3c1d163f134b325a50e0c1ac0db4b4d6"
+          }
+        },
+        {
+          "client_id": "807290261623-p1r1h4lcrkul9kb3cngta1vmvm67kfau.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc.staging",
+            "certificate_hash": "44b5ecf075cbc1a8316f7fc3def5eefb76b85872"
+          }
+        },
+        {
+          "client_id": "807290261623-v0nkeoktvv0n71qg8pclmunqga6hosro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rideufsc.staging",
+            "certificate_hash": "91088b0e704366f08794d013854f43731d77ecdf"
+          }
+        },
+        {
+          "client_id": "807290261623-5ksh5migs1oghq2dv2d4km23nppn2e9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZq7yrx2pyPAZc389T9EatJq86PLv2gQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807290261623-5ksh5migs1oghq2dv2d4km23nppn2e9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "807290261623-b7adl8lge8gn1v3211n4hq4q1pb5g5cr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rideufsc"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

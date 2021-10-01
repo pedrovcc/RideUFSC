@@ -1,0 +1,221 @@
+---
+format_version: '8'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: flutter
+workflows:
+  primary:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4: {}
+    - script@1:
+        title: Do anything with Script step
+    - flutter-installer@0:
+        inputs:
+        - is_update: 'false'
+    - cache-pull@2: {}
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+    - deploy-to-bitrise-io@1: {}
+    - cache-push@2: {}
+  deployStaging:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4: {}
+    - script@1:
+        title: Do anything with Script step
+    - certificate-and-profile-installer@1: {}
+    - flutter-installer@0:
+        inputs:
+        - is_update: 'false'
+    - cache-pull@2: {}
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+        - platform: both
+    - xcode-archive@3:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - export_method: "$BITRISE_EXPORT_METHOD"
+        - configuration: Release
+    - deploy-to-bitrise-io@1: {}
+    - cache-push@2: {}
+  androidDeployStaging:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4: {}
+    - flutter-installer@0:
+        inputs:
+        - is_update: 'false'
+    - cache-pull@2: {}
+    - get-pubspec-version-and-build-number@1: {}
+    - script@1:
+        title: Get Correct Project Version
+        inputs:
+        - content: |-
+            if [[ -z "${VERSION}" ]]; then
+              envman add --key PROJECT_VERSION --value $PUBSPEC_VERSION_NAME
+            else
+              envman add --key PROJECT_VERSION --value $VERSION
+            fi
+    - script@1:
+        inputs:
+        - content: |-
+            echo "s|version: ${PUBSPEC_VERSION}|version: ${PROJECT_VERSION}+${BITRISE_BUILD_NUMBER}|g"
+            sed -i '' "s/version: ${PUBSPEC_VERSION}/version: ${PROJECT_VERSION}+${BITRISE_BUILD_NUMBER}/g" $BITRISE_SOURCE_DIR/pubspec.yaml
+        title: Force Project Version
+    - get-pubspec-version-and-build-number@1: {}
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+        - android_additional_params: "--flavor $BITRISE_SCHEME --release"
+        - platform: android
+    - deploy-to-bitrise-io@1.12: {}
+    - firebase-app-distribution@0:
+        inputs:
+        - app_path: "$BITRISE_APK_PATH"
+        - app: 1:766737273214:android:43e933a9bd65ce71db232f
+        - groups: jungle
+        - firebase_token: "$FIREBASE_TOKEN"
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+
+            git --version
+
+            git fetch --all --tags
+            npm install -g conventional-recommended-bump
+            npm install -g conventional-changelog-cli
+            npm install -g conventional-changelog-angular
+            npm install -g conventional-github-releaser
+            npm install -g semver
+
+            git config --local user.email "dev@jungledevs.com"
+            git config --local user.name "Bitrise Action"
+
+            git add pubspec.yaml
+            git commit -m 'build: Update version name and build number'
+
+            conventional-changelog -p angular -i CHANGELOG.md -s
+            git add CHANGELOG.md
+            git commit -m 'docs: Update changelog file'
+
+            git tag "${PUBSPEC_VERSION_NAME}-stagingAndroid-build${BITRISE_BUILD_NUMBER}"
+            git push origin $BRANCH
+            git push origin "${PUBSPEC_VERSION_NAME}-stagingAndroid-build${BITRISE_BUILD_NUMBER}"
+
+            export CONVENTIONAL_GITHUB_RELEASER_TOKEN="${GITHUB_ACCESS_TOKEN}"
+            conventional-github-releaser -p angular --verbose
+        title: Github Release Script
+    - cache-push@2: {}
+    envs:
+    - opts:
+        is_expand: false
+      BITRISE_SCHEME: staging
+  androidDeploy:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4: {}
+    - flutter-installer@0:
+        inputs:
+        - is_update: 'false'
+    - cache-pull@2: {}
+    - get-pubspec-version-and-build-number@1: {}
+    - script@1:
+        title: Get Correct Project Version
+        inputs:
+        - content: |-
+            if [[ -z "${VERSION}" ]]; then
+              envman add --key PROJECT_VERSION --value $PUBSPEC_VERSION_NAME
+            else
+              envman add --key PROJECT_VERSION --value $VERSION
+            fi
+    - script@1:
+        inputs:
+        - content: |-
+            echo "s|version: ${PUBSPEC_VERSION}|version: ${PROJECT_VERSION}+${BITRISE_BUILD_NUMBER}|g"
+            sed -i '' "s/version: ${PUBSPEC_VERSION}/version: ${PROJECT_VERSION}+${BITRISE_BUILD_NUMBER}/g" $BITRISE_SOURCE_DIR/pubspec.yaml
+        title: Force Project Version
+    - get-pubspec-version-and-build-number@1: {}
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+    - flutter-build@0:
+        inputs:
+        - project_location: "$BITRISE_FLUTTER_PROJECT_LOCATION"
+        - android_additional_params: "--flavor $BITRISE_SCHEME --release"
+        - platform: android
+    - sign-apk@1: {}
+    - deploy-to-bitrise-io@1.12: {}
+    - firebase-app-distribution@0:
+        inputs:
+        - app_path: "$BITRISE_APK_PATH"
+        - app: 1:766737273214:android:1a3005784f85b5c6db232f
+        - groups: jungle
+        - firebase_token: "$FIREBASE_TOKEN"
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+
+            git --version
+
+            git fetch --all --tags
+            npm install -g conventional-recommended-bump
+            npm install -g conventional-changelog-cli
+            npm install -g conventional-changelog-angular
+            npm install -g conventional-github-releaser
+            npm install -g semver
+
+            git config --local user.email "dev@jungledevs.com"
+            git config --local user.name "Bitrise Action"
+
+            git add pubspec.yaml
+            git commit -m 'build: Update version name and build number'
+
+            conventional-changelog -p angular -i CHANGELOG.md -s
+            git add CHANGELOG.md
+            git commit -m 'docs: Update changelog file'
+
+            git tag "${PUBSPEC_VERSION_NAME}-stagingAndroid-build${BITRISE_BUILD_NUMBER}"
+            git push origin $BRANCH
+            git push origin "${PUBSPEC_VERSION_NAME}-stagingAndroid-build${BITRISE_BUILD_NUMBER}"
+
+            export CONVENTIONAL_GITHUB_RELEASER_TOKEN="${GITHUB_ACCESS_TOKEN}"
+            conventional-github-releaser -p angular --verbose
+        title: Github Release Script
+    - cache-push@2: {}
+    envs:
+    - opts:
+        is_expand: false
+      BITRISE_SCHEME: production
+app:
+  envs:
+  - opts:
+      is_expand: false
+    BITRISE_FLUTTER_PROJECT_LOCATION: "."
+  - opts:
+      is_expand: false
+    BITRISE_PROJECT_PATH: ios/Runner.xcworkspace
+  - opts:
+      is_expand: false
+    BITRISE_SCHEME: staging
+  - opts:
+      is_expand: false
+    BITRISE_EXPORT_METHOD: development

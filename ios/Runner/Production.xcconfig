@@ -1,0 +1,11 @@
+//
+//  Production.xcconfig
+//  Runner
+//
+//  Created by Arthur Rossetti on 10/11/20.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+BUNDLE_DISPLAY_NAME = Ride UFSC
+PRODUCT_BUNDLE_IDENTIFIER = rideufsc
